@@ -28,6 +28,8 @@ Compose maps treasury and provider secrets into **game** only, never into fronte
 
 The template sets `COLLECTOR_CRYPT_PAYMENT_WALLET=GachaNgyXTU3zFogQ8Z5jR2BLXs8215X2AtEH18VxJq3`, recovered from Grailshot's saved provider-signed transaction and checked against its USDC recipient account. This public payment address is not your treasury. Ticksy still validates every new provider transaction against the configured address before signing.
 
+`COLLECTOR_CRYPT_API_KEY` is optional and omitted from the setup template. Public pack requests can run without it, as in Grailshot. Optional authenticated integration support remains available if Collector Crypt supplies partner access; this does not establish access to the private Pokewatch 2000 machine.
+
 Before unattended operation, configure the coin mint, dedicated treasury recipient/key, RPC, Jupiter access, verified provider payment wallet and any required provider access. Configure the wallet exclusion list and complete a controlled funded end-to-end validation. Keep mainnet disabled until those checks are complete. Private Pokewatch 2000 access still requires verification; deployment does not unlock it.
 
 ## Updates and storage
