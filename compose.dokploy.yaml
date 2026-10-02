@@ -1,0 +1,106 @@
+services:
+  gateway:
+    build:
+      context: .
+      target: gateway
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+      game:
+        condition: service_healthy
+    expose:
+      - "80"
+    networks:
+      - dokploy-network
+      - app
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      target: web
+    restart: unless-stopped
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  game:
+    build:
+      context: .
+      target: game
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 60s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "4100"
+      SERVE_STATIC: "false"
+      # Traefik -> Nginx gateway -> Fastify, matching Grailshot.
+      TRUST_PROXY_HOPS: "2"
+      APP_ORIGIN: ${APP_ORIGIN:?Set APP_ORIGIN to your exact HTTPS domain}
+      DATABASE_URL: postgres://ticksy:${POSTGRES_PASSWORD:?Set a long alphanumeric POSTGRES_PASSWORD}@postgres:5432/ticksy
+      MAINNET_ENABLED: ${MAINNET_ENABLED:-false}
+      MEMECOIN_MINT: ${MEMECOIN_MINT:-}
+      OWNER_WALLET: ${OWNER_WALLET:-}
+      FEE_RECIPIENT: ${FEE_RECIPIENT:-}
+      TREASURY_PRIVATE_KEY: ${TREASURY_PRIVATE_KEY:-}
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-}
+      JUPITER_API_KEY: ${JUPITER_API_KEY:-}
+      COLLECTOR_CRYPT_API_KEY: ${COLLECTOR_CRYPT_API_KEY:-}
+      COLLECTOR_CRYPT_PAYMENT_WALLET: ${COLLECTOR_CRYPT_PAYMENT_WALLET:-GachaNgyXTU3zFogQ8Z5jR2BLXs8215X2AtEH18VxJq3}
+      COLLECTOR_CRYPT_MEMO_PREFIX: ${COLLECTOR_CRYPT_MEMO_PREFIX:-cc}
+      CARDS_MINT: ${CARDS_MINT:-CARDSccUMFKoPRZxt5vt3ksUbxEFEcnZ3H2pd3dKxYjp}
+      USDC_MINT: ${USDC_MINT:-EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v}
+      GAS_RESERVE_SOL: ${GAS_RESERVE_SOL:-0.05}
+      SLIPPAGE_BPS: ${SLIPPAGE_BPS:-100}
+      EXCLUDED_WALLETS: ${EXCLUDED_WALLETS:-}
+    networks:
+      - app
+      - database
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4100/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ticksy
+      POSTGRES_DB: ticksy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a long alphanumeric POSTGRES_PASSWORD}
+    volumes:
+      - ticksy-postgres:/var/lib/postgresql/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ticksy -d ticksy"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  ticksy-postgres:
+
+networks:
+  dokploy-network:
+    external: true
+  app:
+  database:
+    internal: true

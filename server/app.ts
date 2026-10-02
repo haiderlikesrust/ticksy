@@ -29,7 +29,10 @@ export async function createApp(options:{db?:Database;chain?:Chain;providers?:Pr
  });
  const owner=async(req:any)=>{const user=await sessionPlayer(db,req.cookies[COOKIE]);if(!user?.owner)throw Object.assign(new Error('Owner wallet authentication required'),{statusCode:403});return user;};
  const route=(method:'get'|'post',path:string,handler:(req:any,reply:any)=>Promise<any>)=>app[method](path,async(req,reply)=>serial.run(()=>handler(req,reply)));
- app.get('/api/health',async()=>({ok:true,brand:'Ticksy',spendingEnabled:config.live}));
+ app.get('/api/health',{config:{rateLimit:false}},async(_req,reply)=>{
+   try{await serial.run(()=>db.query('SELECT 1'));return{ok:true,brand:'Ticksy',database:config.DATABASE_URL?'postgres':'pglite',spendingEnabled:config.live};}
+   catch{return reply.code(503).send({ok:false,brand:'Ticksy'});}
+ });
  route('get','/api/session',async req=>sessionPlayer(db,req.cookies[COOKIE]));
  route('post','/api/auth/challenge',async req=>{const b=z.object({wallet:z.string().min(32).max(44)}).parse(req.body);return challenge(db,b.wallet);});
  route('post','/api/auth/verify',async(req,reply)=>{const b=z.object({id:z.string().uuid(),signature:z.string().min(60).max(128)}).parse(req.body);const result=await verify(db,b.id,b.signature);reply.setCookie(COOKIE,result.token,{httpOnly:true,secure:config.APP_ORIGIN.startsWith('https:'),sameSite:'strict',path:'/',maxAge:86400});return{wallet:result.wallet};});

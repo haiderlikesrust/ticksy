@@ -1,0 +1,38 @@
+name: Verify app and Dokploy stack
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      APP_ORIGIN: http://127.0.0.1:8080
+      POSTGRES_PASSWORD: disposableCiDatabaseOnly32Letters
+      MAINNET_ENABLED: "false"
+      SMOKE_TEST_FIXTURE: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - name: Validate Compose
+        run: docker compose -p ticksy-ci -f compose.dokploy.yaml -f compose.ci.yaml config --quiet
+      - name: Build and start production images
+        run: |
+          docker network create dokploy-network
+          docker compose -p ticksy-ci -f compose.dokploy.yaml -f compose.ci.yaml up -d --build --wait --wait-timeout 180
+      - name: Verify routes, assets and wallet sessions through Nginx
+        run: node scripts/smoke-dokploy.mjs
+      - name: Stack logs
+        if: failure()
+        run: docker compose -p ticksy-ci -f compose.dokploy.yaml -f compose.ci.yaml logs --tail 100
+      - name: Stop disposable stack
+        if: always()
+        run: docker compose -p ticksy-ci -f compose.dokploy.yaml -f compose.ci.yaml down

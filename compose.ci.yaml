@@ -1,0 +1,5 @@
+# Disposable local/CI fixture only. Production exposes only the Dokploy gateway.
+services:
+  gateway:
+    ports:
+      - "127.0.0.1:8080:80"
