@@ -1,0 +1,11 @@
+import 'dotenv/config';
+import { z } from 'zod';
+const env=z.object({MAINNET_ENABLED:z.enum(['true','false']).default('false'),PORT:z.coerce.number().default(4100),HOST:z.string().default('127.0.0.1'),APP_ORIGIN:z.string().url().default('http://127.0.0.1:5173'),DATABASE_URL:z.string().default(''),MEMECOIN_MINT:z.string().default(''),OWNER_WALLET:z.string().default(''),FEE_RECIPIENT:z.string().default(''),TREASURY_PRIVATE_KEY:z.string().default(''),SOLANA_RPC_URL:z.string().default(''),JUPITER_API_KEY:z.string().default(''),COLLECTOR_CRYPT_API_KEY:z.string().default(''),COLLECTOR_CRYPT_PAYMENT_WALLET:z.string().default(''),COLLECTOR_CRYPT_MEMO_PREFIX:z.string().regex(/^[a-zA-Z0-9_-]{1,32}$/).default('cc'),CARDS_MINT:z.string().default('CARDSccUMFKoPRZxt5vt3ksUbxEFEcnZ3H2pd3dKxYjp'),USDC_MINT:z.string().default('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),GAS_RESERVE_SOL:z.coerce.number().min(0.05).default(0.05),SLIPPAGE_BPS:z.coerce.number().int().min(1).max(100).default(100),EXCLUDED_WALLETS:z.string().default(''),OPERATOR_JURISDICTION:z.string().default(''),PERMITTED_REGIONS:z.string().default(''),PARTICIPATION_REVIEW_COMPLETE:z.enum(['true','false']).default('false'),EXCLUSIONS_REVIEW_COMPLETE:z.enum(['true','false']).default('false'),TRUST_PROXY_HOPS:z.coerce.number().int().min(0).max(2).default(0),SERVE_STATIC:z.enum(['true','false']).default('false')}).parse(process.env);
+export const config={...env,live:env.MAINNET_ENABLED==='true'};
+export const defaultSettings={paused:true,gasReserveSol:config.GAS_RESERVE_SOL,slippageBps:config.SLIPPAGE_BPS,dailyCapUsd:null,enabledPacks:['ewatch_250','ewatch_500']};
+export function configBlockers(){return [
+ ...(['MEMECOIN_MINT','OWNER_WALLET','FEE_RECIPIENT','TREASURY_PRIVATE_KEY','SOLANA_RPC_URL','JUPITER_API_KEY','COLLECTOR_CRYPT_PAYMENT_WALLET','DATABASE_URL'] as const).filter(k=>!config[k]).map(k=>`Configure ${k}`),
+ ...(!config.live?['Real spending is disabled']:[]),
+ ...(!config.OPERATOR_JURISDICTION||!config.PERMITTED_REGIONS||config.PARTICIPATION_REVIEW_COMPLETE!=='true'?['Establish operator jurisdiction, permitted participation, and document the participation review']:[]),
+ ...(config.EXCLUSIONS_REVIEW_COMPLETE!=='true'?['Verify and publish all project, protocol custody, and liquidity exclusions']:[])
+ ];}

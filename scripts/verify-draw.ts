@@ -1,0 +1,17 @@
+import { readFile } from 'node:fs/promises';
+import { Connection,TransactionMessage,PublicKey } from '@solana/web3.js';
+import { Beacon,hash,verifyDrawMath } from '../server/draw';
+const input=process.argv[2];if(!input)throw new Error('Usage: npm run verify:draw -- proof.json [https://solana-rpc-url]');
+const proof=JSON.parse(await readFile(input,'utf8')),r=proof.round;
+if(!r?.snapshot||!r.commitment||!r.winner||!r.commitSignature)throw new Error('Drawing is not complete enough to verify');
+const beacon=await new Beacon().get(r.commitment.beaconRound);
+if(beacon.randomness!==r.beacon?.randomness)throw new Error('Stored beacon differs from the verified beacon');
+verifyDrawMath(r.snapshot,r.commitment,beacon.randomness,r.winner);
+const rpc=new Connection(process.argv[3]??'https://api.mainnet-beta.solana.com','finalized'),tx=await rpc.getTransaction(r.commitSignature,{commitment:'finalized',maxSupportedTransactionVersion:0});
+if(!tx||tx.meta?.err||!tx.blockTime||tx.blockTime*1000>=r.commitment.opensAt)throw new Error('Commitment was not finalized before the beacon deadline');
+const signers=tx.transaction.message.staticAccountKeys.slice(0,tx.transaction.message.header.numRequiredSignatures);
+if(!signers.some(k=>k.equals(new PublicKey(proof.treasury))))throw new Error('Treasury did not sign commitment');
+const message=TransactionMessage.decompile(tx.transaction.message);
+const expected=`ticksy:v1:${r.id}:${hash(r.commitment)}:${r.commitment.beaconRound}`;
+if(!message.instructions.some(i=>i.programId.toBase58()==='MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'&&i.data.toString('utf8')===expected))throw new Error('On-chain memo does not match this proof');
+console.log(JSON.stringify({valid:true,round:r.id,winner:r.winner,snapshotSlot:r.snapshot.slot,commitmentSignature:r.commitSignature},null,2));

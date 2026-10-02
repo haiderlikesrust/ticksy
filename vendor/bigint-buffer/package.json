@@ -1,0 +1,8 @@
+{
+  "name": "@grailshot/bigint-buffer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bounded, native-addon-free bigint-buffer compatibility for the Solana SDK",
+  "main": "index.cjs",
+  "types": "index.d.ts"
+}

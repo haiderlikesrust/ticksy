@@ -1,0 +1,72 @@
+{
+  "directory": "C:/Users/Gamer/Documents/ChatGPT/chrono-assets",
+  "watches": [
+    {
+      "file": "rolex-submariner-isolated.png",
+      "model": "Rolex Submariner Date 126610LN",
+      "source": "https://www.rolex.com/watches/submariner/m126610ln-0001",
+      "asset": "https://media.rolex.com/image/upload/f_png,c_limit,w_1000/v1/a677b2c664f6/catalogue/2026/upright-c/m126610ln-0001",
+      "notes": "Official product image, transparent background verified; copyright Rolex; reuse permission not established."
+    },
+    {
+      "file": "rolex-daytona.png",
+      "model": "Rolex Cosmograph Daytona 126500LN",
+      "source": "https://www.rolex.com/watches/cosmograph-daytona/m126500ln-0001",
+      "asset": "https://media.rolex.com/image/upload/f_png,c_limit,w_1000/v1/a677b2c664f6/catalogue/2026/upright-c/m126500ln-0001",
+      "notes": "Official product image; copyright Rolex; reuse permission not established."
+    },
+    {
+      "file": "rolex-datejust.png",
+      "model": "Rolex Datejust 126334",
+      "source": "https://www.rolex.com/watches/datejust/m126334-0014",
+      "asset": "https://media.rolex.com/image/upload/f_png,c_limit,w_1000/v1/a677b2c664f6/catalogue/2026/upright-c/m126334-0014",
+      "notes": "Official product image; copyright Rolex; reuse permission not established."
+    }
+  ],
+  "logos": [
+    {
+      "file": "Rolex_wordmark_logo.svg",
+      "source": "https://commons.wikimedia.org/wiki/File:Rolex_wordmark_logo.svg",
+      "license": "PD-textlogo; trademark applies"
+    },
+    {
+      "file": "G-Shock_logo.png",
+      "source": "https://commons.wikimedia.org/wiki/File:G-Shock_logo.png",
+      "license": "CC BY-SA 4.0",
+      "author": "이이준준혁혁",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "file": "Seiko_logo.svg",
+      "source": "https://commons.wikimedia.org/wiki/File:Seiko_logo.svg",
+      "license": "See source page; trademark applies"
+    },
+    {
+      "file": "Bulova_logo.svg",
+      "source": "https://commons.wikimedia.org/wiki/File:Bulova_logo.svg",
+      "license": "PD-textlogo; trademark applies"
+    },
+    {
+      "file": "Tissot_Logo.svg",
+      "source": "https://commons.wikimedia.org/wiki/File:Tissot_Logo.svg",
+      "license": "See source page; trademark applies"
+    },
+    {
+      "file": "Casio_logo.svg",
+      "source": "https://commons.wikimedia.org/wiki/File:Casio_logo.svg",
+      "license": "See source page; trademark applies"
+    }
+  ],
+  "premiumPack": {
+    "checkedAt": "2026-10-02",
+    "code": "epokewatch_2000",
+    "price": 2000,
+    "public": false,
+    "catalog": "https://gacha.collectorcrypt.com/api/machines",
+    "inventory": "https://gacha.collectorcrypt.com/api/getNfts?code=epokewatch_2000&limit=100",
+    "thumbnailStatus": 404,
+    "prizeImage": "https://d1xpxki1g4htqu.cloudfront.net/yiqv3ge9qk3r2hGqSBvDuCwK16CA565qc5pjwvQThWA",
+    "localFile": "public/assets/patek-aquanaut.webp",
+    "note": "Provider prize image, unmodified; pool highlight only, not a guaranteed prize."
+  }
+}

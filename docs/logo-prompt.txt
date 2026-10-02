@@ -1,0 +1,9 @@
+Use case: logo-brand
+Asset type: premium website navigation logo lockup for Ticksy, a contemporary watch collecting brand at ticksy.pro.
+Primary request: create one refined horizontal logo lockup with a distinct minimal T/clock-hands monogram followed by the exact lowercase wordmark "ticksy".
+Style/medium: flat, sophisticated vector-like brand design rendered as a crisp PNG. Elegant contemporary editorial lettering, graceful proportion and excellent small-size legibility. The abstract monogram subtly suggests watch hands through its geometry and is visually balanced with the wordmark.
+Composition/framing: wide horizontal lockup, icon on the left and wordmark on the right, tight useful canvas with modest even padding. One logo only.
+Color palette: monochrome solid champagne gold #D9C599 throughout the mark and letters, intended to sit on a dark emerald website.
+Text (verbatim): "ticksy" — letters t i c k s y, all lowercase.
+Background: genuinely transparent alpha background.
+Constraints: no crown, no generic clock clipart, no enclosing badge, no gradients, no metallic texture, no shadows, no mockup, no extra slogans, no URL, no additional lettering, no presentation board.
